@@ -1,11 +1,15 @@
 class PostsController < ApplicationController
   before_action :set_post, only: %i[ show update destroy ]
+  skip_before_action :authenticate_request, only: [:index, :show]
 
   # GET /posts
   def index
-    @posts = Post.all
-
-    render json: @posts
+    @posts = Post.left_outer_joins(:tags).select('posts.*, tags.name as tag_name').group('posts.id')
+    begin
+      render json: @posts
+    rescue => e
+      puts "Error rendering JSON: #{e.message}"
+    end
   end
 
   # GET /posts/1
@@ -15,14 +19,20 @@ class PostsController < ApplicationController
 
   # POST /posts
   def create
-    @post = Post.new(post_params)
-
+    @post = Post.new(post_params.except(:tags))
+    tags = post_params[:tags]
+    @post.user_id = @current_user.id
+  
     if @post.save
+      tags.each do |tag|
+        @post.tags << Tag.find_or_create_by(name: tag)
+      end
       render json: @post, status: :created, location: @post
     else
       render json: @post.errors, status: :unprocessable_entity
     end
   end
+  
 
   # PATCH/PUT /posts/1
   def update
@@ -46,6 +56,6 @@ class PostsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def post_params
-      params.require(:post).permit(:title, :body, :user_id)
+      params.require(:post).permit(:title, :body, tags: [])
     end
 end

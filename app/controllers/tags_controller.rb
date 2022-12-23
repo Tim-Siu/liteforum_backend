@@ -1,11 +1,11 @@
 class TagsController < ApplicationController
+  skip_before_action :authenticate_user, only: [:index, :show]
   before_action :set_tag, only: %i[ show update destroy ]
 
   # GET /tags
   def index
-    @tags = Tag.all
-
-    render json: @tags
+    tags = Tag.left_outer_joins(:posts).select('tags.*, count(posts.id) as post_count, posts.title').group('tags.id')
+    render json: tags
   end
 
   # GET /tags/1

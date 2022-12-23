@@ -1,5 +1,5 @@
 class CommentsController < ApplicationController
-  skip_before_action :authenticate_user, only: [:index, :show]
+  skip_before_action :authenticate_request, only: [:index, :show]
   before_action :set_comment, only: %i[ show update destroy ]
 
   # GET /comments
@@ -17,6 +17,7 @@ class CommentsController < ApplicationController
   # POST /comments
   def create
     @comment = Comment.new(comment_params)
+    @comment.user_id = @current_user.id
 
     if @comment.save
       render json: @comment, status: :created, location: @comment

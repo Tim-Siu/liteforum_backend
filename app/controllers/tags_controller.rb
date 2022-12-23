@@ -1,5 +1,5 @@
 class TagsController < ApplicationController
-  skip_before_action :authenticate_user, only: [:index, :show]
+  skip_before_action :authenticate_request, only: [:index, :show]
   before_action :set_tag, only: %i[ show update destroy ]
 
   # GET /tags

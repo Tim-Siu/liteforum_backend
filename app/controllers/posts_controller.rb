@@ -17,7 +17,7 @@ class PostsController < ApplicationController
       post_data = {
         id: post.id,
         title: post.title,
-        user_id: post.user_id,
+        user_name: post.user.name,
         created_at: post.created_at,
         tags: []
       }

@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
-  skip_before_action :authenticate_user, only: [:create, :index]
+  skip_before_action :authenticate_request, only: [:create, :index]
+    require 'jwt'
   
   def index
       users = User.left_outer_joins(:posts).select('users.*, count(posts.id) as post_count').group('users.id')
@@ -14,7 +15,10 @@ class UsersController < ApplicationController
   def create
       user = User.new(user_params)
       if user.save
-      render json: user
+        payload = {user_id: user.id}
+        secrete_key = Rails.application.secrets.secret_key_base
+        token = JWT.encode(payload, secrete_key)   
+        render json: {token: token, user_id: user.id, name: user.name} 
       else
       render json: { error: "Invalid username or password" }, status: :unprocessable_entity
       end

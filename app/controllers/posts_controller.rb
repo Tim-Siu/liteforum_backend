@@ -15,23 +15,24 @@ class PostsController < ApplicationController
 
     # None of the above worked, so I had to do it the old fashioned way
 
-    posts = Post.eager_load(:tags).all
-    results = []
+    # posts = Post.eager_load(:tags).all
+    # results = []
 
-    posts.each do |post|
-      post_data = {
-        id: post.id,
-        title: post.title,
-        user_name: post.user.name,
-        created_at: post.created_at,
-        tags: []
-      }
-      post.tags.each do |tag|
-        post_data[:tags] << tag.name
-      end
-      results << post_data
-    end
-    render json: results
+    # posts.each do |post|
+    #   post_data = {
+    #     id: post.id,
+    #     title: post.title,
+    #     user_name: post.user.name,
+    #     created_at: post.created_at,
+    #     tags: []
+    #   }
+    #   post.tags.each do |tag|
+    #     post_data[:tags] << tag.name
+    #   end
+    #   results << post_data
+    # end
+    # render json: results
+    render json: Post.all.as_json(include: [:tags, user: {only: [:name]}])
   end
 
   # GET /posts/1

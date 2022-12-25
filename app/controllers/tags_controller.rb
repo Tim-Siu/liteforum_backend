@@ -4,13 +4,13 @@ class TagsController < ApplicationController
 
   # GET /tags
   def index
-    tags = Tag.left_outer_joins(:posts).select('tags.*, count(posts.id) as post_count, posts.title').group('tags.id')
+    tags = Tag.left_outer_joins(:posts).select('tags.*, count(posts.id) as post_count').group('tags.id')
     render json: tags
   end
 
   # GET /tags/1
   def show
-    render json: @tag
+    render json: @tag.as_json(include: [posts: {only: [:title, :id]}])
   end
 
   # POST /tags

@@ -1,4 +1,6 @@
+
 class PostsController < ApplicationController
+
   before_action :set_post, only: %i[ show update destroy ]
   skip_before_action :authenticate_request, only: [:index, :show]
 
@@ -10,6 +12,9 @@ class PostsController < ApplicationController
     # @posts = Post.eager_load(:tags).select('posts.*, tags.name').group('posts.id')
     # @posts = Post.includes(:tags).group('posts.id').pluck(:id, :title, 'tags.name')
     # @posts = Post.joins(:tags).group('posts.id').pluck(:id, :title, 'tags.name')
+
+    # None of the above worked, so I had to do it the old fashioned way
+
     posts = Post.eager_load(:tags).all
     results = []
 
@@ -30,8 +35,9 @@ class PostsController < ApplicationController
   end
 
   # GET /posts/1
+
   def show
-    render json: @post.as_json(include: [:tags, :comments])
+    render json: @post.as_json(include: [:tags, :comments, user: {only: [:name]}])
   end
 
   # POST /posts

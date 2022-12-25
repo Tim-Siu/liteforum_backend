@@ -6,7 +6,7 @@ class UsersController < ApplicationController
       users = User.left_outer_joins(:posts).select('users.*, count(posts.id) as post_count').group('users.id')
       render json: users
   end
-  
+
   def show
       user = User.find(params[:id])
       render json: user

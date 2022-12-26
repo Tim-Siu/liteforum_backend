@@ -6,6 +6,9 @@ class PostsController < ApplicationController
 
   # GET /posts
   def index
+    render json: Post.all.order(created_at: :desc).limit(12).as_json(include: [:tags, user: {only: [:name]}])
+  end
+    #below are all the different ways I tried to get the tags to show up in the index
     # @posts = Post.left_outer_joins(:tags).select('posts.*, tags.name as tag_name').group('posts.id')
     # @posts = Post.includes(:tags).select('posts.*, tags.name as tag_name').group('posts.id')
     # @posts = Post.joins(:tags).select('posts.*, tags.name as tag_name').group('posts.id')
@@ -32,8 +35,6 @@ class PostsController < ApplicationController
     #   results << post_data
     # end
     # render json: results
-    render json: Post.all.as_json(include: [:tags, user: {only: [:name]}])
-  end
 
   # GET /posts/1
 

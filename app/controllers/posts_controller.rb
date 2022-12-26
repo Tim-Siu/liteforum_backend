@@ -1,8 +1,8 @@
 
 class PostsController < ApplicationController
 
-  before_action :set_post, only: %i[ show update destroy ]
   skip_before_action :authenticate_request, only: [:index, :show]
+  before_action :set_post, only: [:show, :update, :destroy]
 
   # GET /posts
   def index
@@ -38,7 +38,7 @@ class PostsController < ApplicationController
   # GET /posts/1
 
   def show
-    render json: @post.as_json(include: [:tags, :comments, user: {only: [:name]}])
+    render json: @post.as_json(include: [:tags, {comments: {include: [user: {only: [:name]}]}}, user: {only: [:name]}])
   end
 
   # POST /posts
@@ -60,22 +60,31 @@ class PostsController < ApplicationController
 
   # PATCH/PUT /posts/1
   def update
-    @post.tags.destroy_all
-    tags = post_params[:tags]
-    tags.each do |tag|
-      @post.tags << Tag.find_or_create_by(name: tag)
-    end
-    if @post.update(post_params.except(:tags))
-      render json: @post
+    if @post.user_id != @current_user.id
+      @post.tags.destroy_all
+      tags = post_params[:tags]
+      tags.each do |tag|
+        @post.tags << Tag.find_or_create_by(name: tag)
+      end
+      if @post.update(post_params.except(:tags))
+        render json: @post
+      else
+        render json: @post.errors, status: :unprocessable_entity
+      end
     else
-      render json: @post.errors, status: :unprocessable_entity
+      render json: {error: 'You are not authorized to edit this post'}, status: :unauthorized
     end
+
   end
 
 
   # DELETE /posts/1
   def destroy
-    @post.destroy
+    if @post.user_id != @current_user.id
+      @post.destroy
+    else
+      render json: {error: 'You are not authorized to delete this post'}, status: :unauthorized
+    end
   end
 
   private

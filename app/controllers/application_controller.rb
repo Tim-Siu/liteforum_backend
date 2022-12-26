@@ -38,6 +38,7 @@ class ApplicationController < ActionController::API
       # Set the current user by retrieving the user's information from the JWT payload
       @current_user = User.find(decoded_token[0]['user_id'])
     end
+
     
     
 end

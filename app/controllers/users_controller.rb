@@ -8,8 +8,12 @@ class UsersController < ApplicationController
   end
 
   def show
+    if @current_user.id == params[:id].to_i
       user = User.find(params[:id])
       render json: user
+    else
+      render json: { error: "You are not authorized to view this user" }, status: :unauthorized
+    end
   end
   
   def create
@@ -25,12 +29,16 @@ class UsersController < ApplicationController
   end
   
   def update
+    if @current_user.id == params[:id].to_i
       user = User.find(params[:id])
       if user.update(user_params)
       render json: user
       else
       render json: { error: "Invalid username or password" }, status: :unprocessable_entity
       end
+    else
+      render json: { error: "You are not authorized to update this user" }, status: :unauthorized
+    end
   end
 
   private

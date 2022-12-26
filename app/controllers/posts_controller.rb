@@ -38,7 +38,7 @@ class PostsController < ApplicationController
   # GET /posts/1
 
   def show
-    render json: @post.as_json(include: [:tags, {comments: {include: [user: {only: [:name]}]}}, user: {only: [:name]}])
+    render json: @post.as_json(include: [:tags, {comments: {include: [user: {only: [:name]}]}}, user: {only: [:name, :id]}])
   end
 
   # POST /posts

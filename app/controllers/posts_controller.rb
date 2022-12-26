@@ -60,7 +60,7 @@ class PostsController < ApplicationController
 
   # PATCH/PUT /posts/1
   def update
-    if @post.user_id != @current_user.id
+    if @post.user_id = @current_user.id
       @post.tags.destroy_all
       tags = post_params[:tags]
       tags.each do |tag|
@@ -80,7 +80,7 @@ class PostsController < ApplicationController
 
   # DELETE /posts/1
   def destroy
-    if @post.user_id != @current_user.id
+    if @post.user_id = @current_user.id
       @post.destroy
     else
       render json: {error: 'You are not authorized to delete this post'}, status: :unauthorized

@@ -10,7 +10,7 @@ class UsersController < ApplicationController
   def show
     if @current_user.id == params[:id].to_i
       user = User.find(params[:id])
-      render json: user
+      render json: user.as_json(include: [posts: {only: [:title, :id]}, comments: {only: [:body, :id]}])
     else
       render json: { error: "You are not authorized to view this user" }, status: :unauthorized
     end

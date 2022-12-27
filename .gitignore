@@ -16,6 +16,8 @@
 /tmp/*
 !/log/.keep
 !/tmp/.keep
+.DS_Store
+.gitignore
 
 # Ignore pidfiles, but keep the directory.
 /tmp/pids/*

@@ -4,6 +4,11 @@ class TagsController < ApplicationController
 
   # GET /tags
   def index
+    for tag in Tag.all
+      if tag.posts.count == 0
+        tag.destroy
+      end
+    end
     tags = Tag.all.order(created_at: :desc).limit(12).left_outer_joins(:posts).select('tags.*, count(posts.id) as post_count').group('tags.id')
     render json: tags
   end

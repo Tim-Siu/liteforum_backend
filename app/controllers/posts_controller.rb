@@ -8,35 +8,6 @@ class PostsController < ApplicationController
   def index
     render json: Post.all.order(created_at: :desc).limit(12).as_json(include: [:tags, user: {only: [:name]}])
   end
-    #below are all the different ways I tried to get the tags to show up in the index
-    # @posts = Post.left_outer_joins(:tags).select('posts.*, tags.name as tag_name').group('posts.id')
-    # @posts = Post.includes(:tags).select('posts.*, tags.name as tag_name').group('posts.id')
-    # @posts = Post.joins(:tags).select('posts.*, tags.name as tag_name').group('posts.id')
-    # @posts = Post.eager_load(:tags).select('posts.*, tags.name').group('posts.id')
-    # @posts = Post.includes(:tags).group('posts.id').pluck(:id, :title, 'tags.name')
-    # @posts = Post.joins(:tags).group('posts.id').pluck(:id, :title, 'tags.name')
-
-    # None of the above worked, so I had to do it the old fashioned way
-
-    # posts = Post.eager_load(:tags).all
-    # results = []
-
-    # posts.each do |post|
-    #   post_data = {
-    #     id: post.id,
-    #     title: post.title,
-    #     user_name: post.user.name,
-    #     created_at: post.created_at,
-    #     tags: []
-    #   }
-    #   post.tags.each do |tag|
-    #     post_data[:tags] << tag.name
-    #   end
-    #   results << post_data
-    # end
-    # render json: results
-
-  # GET /posts/1
 
   def show
     render json: @post.as_json(include: [:tags, {comments: {include: [user: {only: [:name]}]}}, user: {only: [:name, :id]}])

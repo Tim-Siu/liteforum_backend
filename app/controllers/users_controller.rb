@@ -2,10 +2,10 @@ class UsersController < ApplicationController
   skip_before_action :authenticate_request, only: [:create, :index]
     require 'jwt'
   
-  def index
-      users = User.left_outer_joins(:posts).select('users.*, count(posts.id) as post_count').group('users.id')
-      render json: users
-  end
+  # def index
+  #     users = User.left_outer_joins(:posts).select('users.*, count(posts.id) as post_count').group('users.id')
+  #     render json: users
+  # end
 
   def show
     if @current_user.id == params[:id].to_i
@@ -28,18 +28,18 @@ class UsersController < ApplicationController
       end
   end
   
-  def update
-    if @current_user.id == params[:id].to_i
-      user = User.find(params[:id])
-      if user.update(user_params)
-      render json: user
-      else
-      render json: { error: "Invalid username or password" }, status: :unprocessable_entity
-      end
-    else
-      render json: { error: "You are not authorized to update this user" }, status: :unauthorized
-    end
-  end
+  # def update
+  #   if @current_user.id == params[:id].to_i
+  #     user = User.find(params[:id])
+  #     if user.update(user_params)
+  #     render json: user
+  #     else
+  #     render json: { error: "Invalid username or password" }, status: :unprocessable_entity
+  #     end
+  #   else
+  #     render json: { error: "You are not authorized to update this user" }, status: :unauthorized
+  #   end
+  # end
 
   private
     def user_params
